@@ -10,8 +10,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
 import kotlin.math.sqrt
 
@@ -35,6 +38,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var button: Button
     private lateinit var totalTextView: TextView
     private lateinit var stepsTodayView: TextView
+    private lateinit var circularProgressBar: CircularProgressBar
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,6 +48,8 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         button = findViewById(R.id.button)
         totalTextView = findViewById(R.id.totalSteps)
         stepsTodayView = findViewById(R.id.stepsToday)
+        circularProgressBar = findViewById<CircularProgressBar>(R.id.circularProgressBar)
+        circularProgressBar.progressMax = 10000f
         resetSteps()
         loadData()
 
@@ -76,7 +84,12 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         MagnitudePrevious = Magnitude
         currentSteps = totalSteps - previousTotalSteps
-        stepsToday = totalSteps - previousTodaysSteps
+        stepsToday = currentSteps
+
+        circularProgressBar.apply{
+            setProgressWithAnimation(stepsToday.toFloat())
+        }
+
         stepsTodayView.text = stepsToday.toString()
         textView.text = currentSteps.toString();
         totalTextView.text = totalSteps.toString()
@@ -154,5 +167,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         previousTotalSteps = totalSteps
 
     }
+
+    
 
 }

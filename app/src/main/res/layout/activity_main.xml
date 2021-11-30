@@ -6,32 +6,82 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
+    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+
+        android:id="@+id/circularProgressBar"
+        android:layout_width="250dp"
+        android:layout_height="223dp"
+        android:layout_marginTop="65dp"
+        app:cpb_background_progressbar_color="#b6bbd8"
+        app:cpb_background_progressbar_width="5dp"
+        app:cpb_progress_direction="to_right"
+        app:cpb_progressbar_color="#3f51b5"
+        app:cpb_progressbar_width="10dp"
+        app:cpb_round_border="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+
+        android:id="@+id/circularProgressBar1"
+        android:layout_width="176dp"
+        android:layout_height="181dp"
+        android:layout_marginTop="360dp"
+        app:cpb_background_progressbar_color="#b6bbd8"
+        app:cpb_background_progressbar_width="5dp"
+        app:cpb_progress_direction="to_right"
+        app:cpb_progressbar_color="#3f51b5"
+        app:cpb_progressbar_width="10dp"
+        app:cpb_round_border="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.90"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.mikhaellopez.circularprogressbar.CircularProgressBar
+        android:id="@+id/circularProgressBar2"
+        android:layout_width="176dp"
+        android:layout_height="181dp"
+        android:layout_marginTop="360dp"
+        app:cpb_background_progressbar_color="#b6bbd8"
+        app:cpb_background_progressbar_width="5dp"
+        app:cpb_progress_direction="to_right"
+        app:cpb_progressbar_color="#3f51b5"
+        app:cpb_progressbar_width="10dp"
+        app:cpb_round_border="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.10"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/stepsToday"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="296dp"
-        android:layout_marginEnd="65dp"
         android:text="0"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAlignment="center"
+        android:textSize="70sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/circularProgressBar"
+        app:layout_constraintEnd_toEndOf="@id/circularProgressBar"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar"
+        app:layout_constraintTop_toTopOf="@id/circularProgressBar"/>
+
 
     <TextView
         android:id="@+id/stepsTaken"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="65dp"
-        android:layout_marginTop="296dp"
-        android:layout_marginEnd="65dp"
         android:text="0"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAlignment="center"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/circularProgressBar1"
+        app:layout_constraintEnd_toEndOf="@id/circularProgressBar1"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar1"
+        app:layout_constraintTop_toTopOf="@id/circularProgressBar1" />
 
     <Button
         android:id="@+id/button"
@@ -48,41 +98,59 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="252dp"
         android:text="Current Steps:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textColor="#9C27B0"
+        app:layout_constraintBottom_toTopOf="@+id/circularProgressBar1"
+        app:layout_constraintEnd_toEndOf="@+id/circularProgressBar1"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar1" />
 
     <TextView
         android:id="@+id/totalSteps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
         android:text="0"
-        android:textSize="60sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:textAlignment="center"
+        android:textSize="45sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/circularProgressBar2"
+        app:layout_constraintEnd_toEndOf="@id/circularProgressBar2"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar2"
+        app:layout_constraintTop_toTopOf="@id/circularProgressBar2" />
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginTop="44dp"
         android:text="Total Steps:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+
+        android:textColor="#9C27B0"
+        app:layout_constraintBottom_toTopOf="@+id/circularProgressBar2"
+        app:layout_constraintEnd_toEndOf="@+id/circularProgressBar2"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar2" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="24dp"
+        android:layout_marginEnd="3dp"
+        android:fontFamily="sans-serif-light"
         android:text="Steps Today:"
-        app:layout_constraintBottom_toTopOf="@+id/stepsToday"
-        app:layout_constraintEnd_toEndOf="parent" />
+        android:textColor="#9C27B0"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/circularProgressBar"
+        app:layout_constraintEnd_toEndOf="@+id/circularProgressBar"
+        app:layout_constraintStart_toStartOf="@id/circularProgressBar" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="/10000"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/circularProgressBar" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
