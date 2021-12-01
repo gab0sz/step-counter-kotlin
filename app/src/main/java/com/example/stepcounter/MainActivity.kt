@@ -35,6 +35,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private var currentDate = cal.get(Calendar.DAY_OF_YEAR)
 
     private lateinit var textView: TextView
+    private lateinit var dailygoal: TextView
     private lateinit var button: Button
     private lateinit var totalTextView: TextView
     private lateinit var stepsTodayView: TextView
@@ -48,6 +49,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         button = findViewById(R.id.button)
         totalTextView = findViewById(R.id.totalSteps)
         stepsTodayView = findViewById(R.id.stepsToday)
+        dailygoal = findViewById(R.id.goal)
         circularProgressBar = findViewById<CircularProgressBar>(R.id.circularProgressBar)
         circularProgressBar.progressMax = 10000f
         resetSteps()
@@ -84,12 +86,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         MagnitudePrevious = Magnitude
         currentSteps = totalSteps - previousTotalSteps
-        stepsToday = currentSteps
+        stepsToday = totalSteps - previousTodaysSteps
 
-        circularProgressBar.apply{
-            setProgressWithAnimation(stepsToday.toFloat())
+        if (stepsToday.toFloat() == circularProgressBar.progressMax){
+            Toast.makeText(this, "Reached daily goal, good job!", Toast.LENGTH_SHORT).show()
         }
+        if (stepsToday.toFloat() >= circularProgressBar.progressMax){
 
+            circularProgressBar.apply{
+                setProgressWithAnimation(stepsToday - circularProgressBar.progressMax)
+            }
+        } else {
+            circularProgressBar.apply{
+                setProgressWithAnimation(stepsToday.toFloat())
+            }
+        }
         stepsTodayView.text = stepsToday.toString()
         textView.text = currentSteps.toString();
         totalTextView.text = totalSteps.toString()
@@ -124,6 +135,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             textView.text = 0.toString()
             currentStepsView.text = 0.toString()
             previousTotalSteps = 0
+            previousTodaysSteps = 0
             currentSteps = 0
             totalSteps = 0
 
@@ -132,10 +144,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
     }
     private fun saveData() {
-
-        // Shared Preferences will allow us to save
-        // and retrieve data in the form of key,value pair.
-        // In this function we will save data
         val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
 
         val editor = sharedPreferences.edit()
@@ -148,26 +156,39 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private fun loadData() {
 
-        // In this function we will retrieve data
+
         val sharedPreferences = getSharedPreferences("myPrefs", Context.MODE_PRIVATE)
         val savedNumber = sharedPreferences.getInt("key1", 0)
-
-        val savedDate = sharedPreferences.getInt("DATE_KEY",0)
         val todayStepNumber = sharedPreferences.getInt("key2", 0)
-        // Log.d is used for debugging purposes
+        val savedDate = sharedPreferences.getInt("DATE_KEY", 0)
+
+
         Log.d("MainActivity", "$savedNumber")
         Log.d("CURRENT DATE ", "$currentDate")
         Log.d("SAVED DATE", "$savedDate")
         if (currentDate != savedDate) {
-            previousTodaysSteps = todayStepNumber
+            previousTodaysSteps = savedNumber
+            //previousTodaysSteps = 0
             stepsToday = 0
             stepsTodayView.text = 0.toString()
+            //saveData()
         }
         totalSteps = savedNumber
         previousTotalSteps = totalSteps
-
+        if (currentDate == savedDate){
+            previousTodaysSteps = totalSteps - todayStepNumber
+        }
     }
 
-    
+    fun withEditText(view: View) {
+        val builder = AlertDialog.Builder(this)
+        val inflater = layoutInflater
+        builder.setTitle("Goal setting")
+        val dialogLayout = inflater.inflate(R.layout.alert_dialog_with_edittext, null)
+        val editText  = dialogLayout.findViewById<EditText>(R.id.editText)
+        builder.setView(dialogLayout)
+        builder.setPositiveButton("OK") { dialogInterface, i -> dailygoal.text = "/" + editText.text.toString(); circularProgressBar.progressMax = editText.text.toString().toFloat() }
+        builder.show()
+    }
 
 }

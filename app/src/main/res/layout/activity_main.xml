@@ -87,11 +87,12 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="116dp"
+        android:layout_marginBottom="68dp"
         android:onClick="buttonClick"
         android:text="RESET"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
@@ -142,7 +143,7 @@
         app:layout_constraintStart_toStartOf="@id/circularProgressBar" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/goal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="/10000"
@@ -150,7 +151,19 @@
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/circularProgressBar" />
+
+        app:layout_constraintTop_toBottomOf="@+id/stepsToday" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="136dp"
+        android:onClick="withEditText"
+        android:text="SET DAILY GOAL"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
