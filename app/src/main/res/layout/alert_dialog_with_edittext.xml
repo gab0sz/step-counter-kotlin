@@ -6,10 +6,15 @@
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="match_parent"
+        android:layout_width="213dp"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
         android:hint="Enter your daily goal"
-        android:inputType="number"/>
+        android:text=""
+        android:inputType="number"
+        android:textAlignment="center"
+        android:textColor="#9C27B0"
+        android:textSize="20sp" />
 
 
 </LinearLayout>

@@ -185,9 +185,17 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         val inflater = layoutInflater
         builder.setTitle("Goal setting")
         val dialogLayout = inflater.inflate(R.layout.alert_dialog_with_edittext, null)
-        val editText  = dialogLayout.findViewById<EditText>(R.id.editText)
+        var editText = dialogLayout.findViewById<EditText>(R.id.editText)
         builder.setView(dialogLayout)
-        builder.setPositiveButton("OK") { dialogInterface, i -> dailygoal.text = "/" + editText.text.toString(); circularProgressBar.progressMax = editText.text.toString().toFloat() }
+        builder.setPositiveButton("OK") { dialogInterface,
+                                          i ->
+            if (editText.text.toString() != "") {
+                if (editText.text.toString().toInt() > 0) {
+                    dailygoal.text = "/" + editText.text.toString();
+                    circularProgressBar.progressMax = editText.text.toString().toFloat()
+                }
+            }
+        }
         builder.show()
     }
 
