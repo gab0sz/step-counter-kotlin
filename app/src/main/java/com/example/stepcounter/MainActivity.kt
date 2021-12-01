@@ -91,10 +91,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         if (stepsToday.toFloat() == circularProgressBar.progressMax){
             Toast.makeText(this, "Reached daily goal, good job!", Toast.LENGTH_SHORT).show()
         }
-        if (stepsToday.toFloat() >= circularProgressBar.progressMax){
+        if (stepsToday.toFloat() >= circularProgressBar.progressMax || stepsToday % circularProgressBar.progressMax.toInt() == 0){
 
             circularProgressBar.apply{
-                setProgressWithAnimation(stepsToday - circularProgressBar.progressMax)
+                setProgressWithAnimation(stepsToday - (circularProgressBar.progressMax * (stepsToday / circularProgressBar.progressMax.toInt())))
             }
         } else {
             circularProgressBar.apply{

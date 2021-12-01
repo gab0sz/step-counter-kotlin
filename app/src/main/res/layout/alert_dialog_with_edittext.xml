@@ -6,12 +6,12 @@
 
     <EditText
         android:id="@+id/editText"
-        android:layout_width="213dp"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:fontFamily="sans-serif-light"
         android:hint="Enter your daily goal"
-        android:text=""
         android:inputType="number"
+        android:text=""
         android:textAlignment="center"
         android:textColor="#9C27B0"
         android:textSize="20sp" />
