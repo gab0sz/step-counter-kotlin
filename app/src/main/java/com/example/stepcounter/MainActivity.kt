@@ -1,10 +1,15 @@
 package com.example.stepcounter
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,13 +19,16 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
 import java.util.*
 import kotlin.math.sqrt
 
-class MainActivity : AppCompatActivity(), SensorEventListener {
+class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener {
 
     private var sensorManager: SensorManager? = null
+    private var locationManager: LocationManager? = null
     private var MagnitudePrevious = 0f
 
     private var running = false
@@ -112,9 +120,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun buttonClick(view: View){
-
+        getLocation();
 
     }
+
+    fun getLocation(){
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2)
+        }
+
+        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this);
+    }
+
+
     fun resetSteps() {
         var currentStepsView = findViewById<TextView>(R.id.stepsTaken)
         var button = findViewById<TextView>(R.id.button)
@@ -129,6 +148,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             currentSteps = 0
             // This will save the data
             saveData()
+            getLocation()
         }
 
         button.setOnLongClickListener {
@@ -199,4 +219,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         builder.show()
     }
 
+    override fun onLocationChanged(location: Location) {
+        var lat = findViewById<TextView>(R.id.lat);
+        lat.text = location.latitude.toString()
+        var lon = findViewById<TextView>(R.id.lon);
+        lon.text = location.longitude.toString()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == 2) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+            }
+            else {
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 }
