@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
         stepsTodayView.text = stepsToday.toString()
         textView.text = currentSteps.toString();
         totalTextView.text = totalSteps.toString()
+        getLocation()
         saveData()
     }
 
@@ -128,7 +129,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
     }
 
     fun buttonClick(view: View){
-        getLocation();
+        //getLocation();
 
     }
 
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
             currentSteps = 0
             // This will save the data
             saveData()
-            getLocation()
+
         }
 
         button.setOnLongClickListener {
