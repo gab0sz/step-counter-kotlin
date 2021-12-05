@@ -10,6 +10,7 @@ import android.hardware.SensorManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -22,10 +23,14 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
+import org.json.JSONObject
+import java.net.URL
 import java.util.*
 import kotlin.math.sqrt
 
 class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener {
+
+    val API: String = "841a4740501da7fe4d0b67506ad223cc"
 
     private var sensorManager: SensorManager? = null
     private var locationManager: LocationManager? = null
@@ -41,6 +46,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
 
     private var cal = Calendar.getInstance()
     private var currentDate = cal.get(Calendar.DAY_OF_YEAR)
+
+    private var latitude = 0f
+    private var longitude = 0f
 
     private lateinit var textView: TextView
     private lateinit var dailygoal: TextView
@@ -65,7 +73,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-
+        weatherTask().execute()
 
     }
 
@@ -220,20 +228,53 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
     }
 
     override fun onLocationChanged(location: Location) {
-        var lat = findViewById<TextView>(R.id.lat);
-        lat.text = location.latitude.toString()
-        var lon = findViewById<TextView>(R.id.lon);
-        lon.text = location.longitude.toString()
+        var coords = findViewById<TextView>(R.id.latlon);
+        latitude = location.latitude.toFloat()
+        longitude = location.longitude.toFloat()
+        //coords.text = location.latitude.toString() + " " + location.longitude.toString()
+        weatherTask().execute()
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        if (requestCode == 2) {
-            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show()
+    inner class weatherTask() : AsyncTask<String, Void, String>() {
+        override fun doInBackground(vararg params: String?): String? {
+            var response:String? = ""
+            try{
+                if (latitude != 0f) {
+                    response =
+                        URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API").readText(
+                            Charsets.UTF_8
+                        )
+                }
+            }catch (e: Exception){
+                response = null
             }
-            else {
-                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show()
+
+
+            return response
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            //var resp = findViewById<TextView>(R.id.response);
+            //resp.text = result
+
+            try {
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+
+                val temp = main.getString("temp") + "°C"
+                findViewById<TextView>(R.id.temp).text = temp
+                val humidity = main.getString("humidity") + "%"
+                findViewById<TextView>(R.id.hum).text = humidity
+                val city = "Weather in: " + jsonObj.getString("name")
+                findViewById<TextView>(R.id.weather).text = city
+            }
+            catch(e: Exception){
+                return
             }
         }
     }
+
+
 }
