@@ -1,10 +1,16 @@
 package com.example.stepcounter
 
+import android.Manifest
 import android.content.Context
+import android.content.pm.PackageManager
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -14,13 +20,20 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.mikhaellopez.circularprogressbar.CircularProgressBar
+import org.json.JSONObject
+import java.net.URL
 import java.util.*
 import kotlin.math.sqrt
 
-class MainActivity : AppCompatActivity(), SensorEventListener {
+class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener {
+
+    val API: String = "841a4740501da7fe4d0b67506ad223cc"
 
     private var sensorManager: SensorManager? = null
+    private var locationManager: LocationManager? = null
     private var MagnitudePrevious = 0f
 
     private var running = false
@@ -33,6 +46,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private var cal = Calendar.getInstance()
     private var currentDate = cal.get(Calendar.DAY_OF_YEAR)
+
+    private var latitude = 0f
+    private var longitude = 0f
 
     private lateinit var textView: TextView
     private lateinit var dailygoal: TextView
@@ -57,7 +73,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
 
-
+        weatherTask().execute()
 
     }
 
@@ -104,6 +120,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         stepsTodayView.text = stepsToday.toString()
         textView.text = currentSteps.toString();
         totalTextView.text = totalSteps.toString()
+        getLocation()
         saveData()
     }
 
@@ -112,9 +129,20 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     fun buttonClick(view: View){
-
+        //getLocation();
 
     }
+
+    fun getLocation(){
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2)
+        }
+
+        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this);
+    }
+
+
     fun resetSteps() {
         var currentStepsView = findViewById<TextView>(R.id.stepsTaken)
         var button = findViewById<TextView>(R.id.button)
@@ -129,6 +157,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             currentSteps = 0
             // This will save the data
             saveData()
+
         }
 
         button.setOnLongClickListener {
@@ -198,5 +227,55 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         }
         builder.show()
     }
+
+    override fun onLocationChanged(location: Location) {
+        var coords = findViewById<TextView>(R.id.latlon);
+        latitude = location.latitude.toFloat()
+        longitude = location.longitude.toFloat()
+        //coords.text = location.latitude.toString() + " " + location.longitude.toString()
+        weatherTask().execute()
+    }
+
+    inner class weatherTask() : AsyncTask<String, Void, String>() {
+        override fun doInBackground(vararg params: String?): String? {
+            var response:String? = ""
+            try{
+                if (latitude != 0f) {
+                    response =
+                        URL("https://api.openweathermap.org/data/2.5/weather?lat=$latitude&lon=$longitude&units=metric&appid=$API").readText(
+                            Charsets.UTF_8
+                        )
+                }
+            }catch (e: Exception){
+                response = null
+            }
+
+
+            return response
+        }
+
+        override fun onPostExecute(result: String?) {
+            super.onPostExecute(result)
+            //var resp = findViewById<TextView>(R.id.response);
+            //resp.text = result
+
+            try {
+                val jsonObj = JSONObject(result)
+                val main = jsonObj.getJSONObject("main")
+                val sys = jsonObj.getJSONObject("sys")
+
+                val temp = main.getString("temp") + "°C"
+                findViewById<TextView>(R.id.temp).text = temp
+                val humidity = main.getString("humidity") + "%"
+                findViewById<TextView>(R.id.hum).text = humidity
+                val city = "Weather in: " + jsonObj.getString("name")
+                findViewById<TextView>(R.id.weather).text = city
+            }
+            catch(e: Exception){
+                return
+            }
+        }
+    }
+
 
 }
