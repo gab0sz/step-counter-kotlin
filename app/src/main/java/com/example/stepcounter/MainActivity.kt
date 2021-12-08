@@ -120,7 +120,10 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
         stepsTodayView.text = stepsToday.toString()
         textView.text = currentSteps.toString();
         totalTextView.text = totalSteps.toString()
-        getLocation()
+
+        if (isLocationEnabled()) {
+            getLocation()
+        }
         saveData()
     }
 
@@ -133,13 +136,24 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
 
     }
 
-    fun getLocation(){
-        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 2)
+    fun getLocation() {
+        if (isLocationEnabled()){
+            locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+            if ((ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED)
+            ) {
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    2
+                    )
+            }
+
+            locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this);
         }
 
-        locationManager!!.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5f, this);
     }
 
 
@@ -208,6 +222,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
             previousTodaysSteps = totalSteps - todayStepNumber
         }
     }
+    
 
     fun withEditText(view: View) {
         val builder = AlertDialog.Builder(this)
@@ -228,12 +243,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
         builder.show()
     }
 
+
     override fun onLocationChanged(location: Location) {
-        var coords = findViewById<TextView>(R.id.latlon);
-        latitude = location.latitude.toFloat()
-        longitude = location.longitude.toFloat()
-        //coords.text = location.latitude.toString() + " " + location.longitude.toString()
-        weatherTask().execute()
+        if (isLocationEnabled()) {
+            try {
+                var coords = findViewById<TextView>(R.id.latlon);
+                latitude = location.latitude.toFloat()
+                longitude = location.longitude.toFloat()
+                //coords.text = location.latitude.toString() + " " + location.longitude.toString()
+                weatherTask().execute()
+            } catch (e: Exception) {
+                return
+            }
+        }
     }
 
     inner class weatherTask() : AsyncTask<String, Void, String>() {
@@ -277,5 +299,9 @@ class MainActivity : AppCompatActivity(), SensorEventListener, LocationListener 
         }
     }
 
+    protected fun isLocationEnabled(): Boolean {
+        locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }
 
 }
